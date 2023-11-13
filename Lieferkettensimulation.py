@@ -3,11 +3,12 @@ import random
 import matplotlib.pyplot as plt
 import pandas as pd
 
+# Parameter
 lieferant1 = 10
 lieferant2 = 5
 tage = 75
 
-# Direkte Definition der Ressourcen
+# Ressourcen
 stock1 = 0
 stock2 = 0
 miss1 = 0
@@ -92,49 +93,44 @@ env.process(Empfaenger(env))
 env.process(update_ressourcen_liste(env))
 
 # starten mit bestimmter Anzahl an Ticks (in Tagen)
-env.run(until=tage)
+env.run(until=tage+1)
 
-# Restlicher Code bleibt unverändert...
-
-
-# Matrix
+# Matrix in der Konsole
 print("Matrix der Ressourcenwerte:")
 for zeitpunkt, stock1, stock2, nachfrage1, nachfrage2 ,miss1, miss2, cstock1, cstock2 in ressourcen_liste:
     print(f"Zeitpunkt: {zeitpunkt}, Stock1: {stock1}, Stock2: {stock2}, Nachfrage1: {nachfrage1}, Nachfrage2: {nachfrage2}, Miss1: {miss1}, Miss2: {miss2}, CStock1: {cstock1}, CStock2: {cstock2}")
 
-# Berechne den Durchschnitt für stock1
+# Durchschnitt für stock1
 stock1_durchschnitt = sum([stock1 for _, stock1, _, _, _, _, _, _, _ in ressourcen_liste]) / len(ressourcen_liste)
 
-# Berechne den Durchschnitt für stock2
+# Durchschnitt für stock2
 stock2_durchschnitt = sum([stock2 for _, _, stock2, _, _, _, _, _, _ in ressourcen_liste]) / len(ressourcen_liste)
 
-# Gib die Durchschnittswerte aus
+# Durchschnittswerte ausgeben
 print(f"Durchschnitt Stock1: {stock1_durchschnitt}")
 print(f"Durchschnitt Stock2: {stock2_durchschnitt}")
 
-# Berechne den Durchschnitt für cstock1
+# Durchschnitt für cstock1
 cstock1_durchschnitt = sum([cstock1 for _, _, _, _, _, _, _, cstock1, _ in ressourcen_liste]) / len(ressourcen_liste)
 
-# Berechne den Durchschnitt für cstock2
+# Durchschnitt für cstock2
 cstock2_durchschnitt = sum([cstock2 for _, _, _, _, _, _, _, _, cstock2 in ressourcen_liste]) / len(ressourcen_liste)
 
-# Gib die Durchschnittswerte aus
+# Durchschnittswerte ausgeben
 print(f"Durchschnitt CStock1: {cstock1_durchschnitt}")
 print(f"Durchschnitt CStock2: {cstock2_durchschnitt}")
 
-# Berechne die Summe der verpassten Nachfrage für miss1 und miss2
+# Summe der verpassten Nachfrage für miss1 und miss2
 miss1_summe = sum([miss1 for _, _, _, _, _, miss1, _, _, _ in ressourcen_liste])
 miss2_summe = sum([miss2 for _, _, _, _, _, _, miss2, _, _ in ressourcen_liste])
 
-# Berechne die Gesamtsumme der verpassten Nachfrage
+# Gesamtsumme der verpassten Nachfrage
 gesamt_miss = miss1_summe + miss2_summe
 
-# Gib die Summen aus
+# Summen ausgeben
 print(f"Summe Miss1: {miss1_summe}")
 print(f"Summe Miss2: {miss2_summe}")
 print(f"Gesamte Summe der verpassten Nachfrage: {gesamt_miss}")
-
-
 
 # Matplotlib-Diagramm erstellen
 plt.figure(figsize=(12, 6))
