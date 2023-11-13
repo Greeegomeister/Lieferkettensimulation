@@ -1,6 +1,7 @@
 import simpy
 import random
 import matplotlib.pyplot as plt
+import pandas as pd
 
 lieferant1 = 10
 lieferant2 = 5
@@ -222,3 +223,11 @@ plt.legend()
 # Diagramme anzeigen
 plt.grid()
 plt.show()
+
+# Matrix in Pandas DataFrame umwandeln
+columns = ['Zeitpunkt', 'Stock1', 'Stock2', 'Nachfrage1', 'Nachfrage2', 'Miss1', 'Miss2', 'CStock1', 'CStock2']
+df = pd.DataFrame(ressourcen_liste, columns=columns)
+
+# Excel-Datei erstellen und DataFrame darin speichern
+excel_path = '/Users/grego/Desktop/simulation_results.xlsx'
+df.to_excel(excel_path, index=False)
