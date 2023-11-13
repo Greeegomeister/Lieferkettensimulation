@@ -7,103 +7,95 @@ lieferant1 = 10
 lieferant2 = 5
 tage = 75
 
-# Ressourcen
-class Ressourcen:
-    def __init__(self):
-        self.stock1 = 0
-        self.stock2 = 0
-        self.miss1 = 0
-        self.miss2 = 0
-        self.cstock1 = 0
-        self.cstock2 = 0
-        self.nachfrage1 = 0
-        self.nachfrage2 = 0
+# Direkte Definition der Ressourcen
+stock1 = 0
+stock2 = 0
+miss1 = 0
+miss2 = 0
+cstock1 = 0
+cstock2 = 0
+nachfrage1 = 0
+nachfrage2 = 0
 
 # Prozesse
-def Lieferant1(env, ressourcen):
+def Lieferant1(env):
+    global stock1
     while True:
         yield env.timeout(2)
-        #print(f"Lieferant 1: Sendet {lieferant1} Einheiten G1 an Umschlagspunkt am Tag {env.now}")
-        ressourcen.stock1 += lieferant1
-        #print(f"stock1: {ressourcen.stock1}")
-        #print(f"stock2: {ressourcen.stock2}")
-def Lieferant2(env, ressourcen):
+        stock1 += lieferant1
+
+def Lieferant2(env):
+    global stock2
     while True:
         yield env.timeout(1)
-        #print(f"Lieferant 2: Sendet {lieferant2} Einheiten G2 an Umschlagspunkt am Tag {env.now}")
-        ressourcen.stock2 += lieferant2
-        #print(f"stock1: {ressourcen.stock1}")
-        #print(f"stock2: {ressourcen.stock2}")
+        stock2 += lieferant2
 
-def Umschlagspunkt(env, ressourcen):
+def Umschlagspunkt(env):
+    global stock1, stock2, cstock1, cstock2
     while True:
         yield env.timeout(1)
-        if ressourcen.stock1 >= 12:
-            ressourcen.stock1 -= 12
-            ressourcen.cstock1 += 12
-            #print("Umschlagspunkt: Transfer 12 Einheiten von stock1 zu cstock1")
-        if ressourcen.stock2 >= 8:
-            ressourcen.stock2 -= 8
-            ressourcen.cstock2 += 8
-            #print("Umschlagspunkt: Transfer 8 Einheiten von stock2 zu cstock2")
+        if stock1 >= 12:
+            stock1 -= 12
+            cstock1 += 12
 
-def Empfaenger(env, ressourcen):
+        if stock2 >= 8:
+            stock2 -= 8
+            cstock2 += 8
+
+def Empfaenger(env):
+    global nachfrage1, nachfrage2, miss1, miss2, cstock1, cstock2
     while True:
         yield env.timeout(1)
         nachfrage_g1 = random.randint(1, 4)
         nachfrage_g2 = random.randint(2, 8)
-        ressourcen.nachfrage1 = nachfrage_g1
-        ressourcen.nachfrage2 = nachfrage_g2
-        ressourcen.miss1 = 0
-        ressourcen.miss2 = 0
-        if ressourcen.cstock1 >= nachfrage_g1:
-            #print(f"Verbrauch G1 beim Empfänger: {nachfrage_g1}")
-            ressourcen.cstock1 -= nachfrage_g1
+        nachfrage1 = nachfrage_g1
+        nachfrage2 = nachfrage_g2
+        miss1 = 0
+        miss2 = 0
+        if cstock1 >= nachfrage_g1:
+            cstock1 -= nachfrage_g1
         else:
-            #print(f"verpasster Verbrauch G1 beim Empfänger: {nachfrage_g1}")
-            ressourcen.miss1 = nachfrage_g1
+            miss1 = nachfrage_g1
 
-        if ressourcen.cstock2 >= nachfrage_g2:
-            #print(f"Verbrauch G2 beim Empfänger: {nachfrage_g2}")
-            ressourcen.cstock2 -= nachfrage_g2
+        if cstock2 >= nachfrage_g2:
+            cstock2 -= nachfrage_g2
         else:
-            #print(f"verpasster Verbrauch G2 beim Empfänger: {nachfrage_g2}")
-            ressourcen.miss2 = nachfrage_g2
+            miss2 = nachfrage_g2
 
 # Liste für die Ressourcenwerte
 ressourcen_liste = []
 
 # Funktion zum Aktualisieren der Ressourcenwerte und Hinzufügen zur Liste
-def update_ressourcen_liste(env, ressourcen):
+def update_ressourcen_liste(env):
     while True:
         yield env.timeout(1)
         ressourcen_liste.append((
             env.now,
-            ressourcen.stock1,
-            ressourcen.stock2,
-            ressourcen.nachfrage1,
-            ressourcen.nachfrage2,
-            ressourcen.miss1,
-            ressourcen.miss2,
-            ressourcen.cstock1,
-            ressourcen.cstock2
+            stock1,
+            stock2,
+            nachfrage1,
+            nachfrage2,
+            miss1,
+            miss2,
+            cstock1,
+            cstock2
         ))
 
 # Simulationsumgebung
 env = simpy.Environment()
 
-# Instanz der Ressourcen-Klasse
-ressourcen = Ressourcen()
-
 # Prozesse zur Umgebung hinzufügen
-env.process(Lieferant1(env, ressourcen))
-env.process(Lieferant2(env, ressourcen))
-env.process(Umschlagspunkt(env, ressourcen))
-env.process(Empfaenger(env, ressourcen))
-env.process(update_ressourcen_liste(env, ressourcen))
+env.process(Lieferant1(env))
+env.process(Lieferant2(env))
+env.process(Umschlagspunkt(env))
+env.process(Empfaenger(env))
+env.process(update_ressourcen_liste(env))
 
 # starten mit bestimmter Anzahl an Ticks (in Tagen)
 env.run(until=tage)
+
+# Restlicher Code bleibt unverändert...
+
 
 # Matrix
 print("Matrix der Ressourcenwerte:")
