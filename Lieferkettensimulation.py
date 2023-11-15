@@ -30,7 +30,7 @@ save_result = True
 
 # Mac
 base_path = "/Volumes/Samsung T7 /Module/BI2/python/Lieferkettensimulation/Ausgabedateien/"
-data_path = "/Volumes/Samsung T7 /Module/BI2/python/Lieferkettensimulation/Order Vorlagen-20231115-2/Order_History - 3.csv"
+data_path = "/Volumes/Samsung T7 /Module/BI2/python/Lieferkettensimulation/Order Vorlagen-20231115-2/Order_History - 1.csv"
 result_path = os.path.join(base_path, "simulation_results.csv")
 
 # Prognosen
@@ -102,8 +102,12 @@ def Empfaenger(env):
         else:
             # Read demand data from the CSV file
             demand_row = demand_data.iloc[env.now - 1]
-            nachfrage1 = demand_row['Order1']
-            nachfrage2 = demand_row['Order2']
+            # ohne Datenfüllung
+            # nachfrage1 = demand_row['Order1']
+            # nachfrage2 = demand_row['Order2']
+            # mit Datenfüllung
+            nachfrage1 = demand_row['Order1'] if not pd.isna(demand_row['Order1']) else demand_data.loc[:env.now-1, 'Order1'].mean()
+            nachfrage2 = demand_row['Order2'] if not pd.isna(demand_row['Order2']) else demand_data.loc[:env.now-1, 'Order2'].mean()
 
         miss1 = 0
         miss2 = 0
@@ -485,6 +489,11 @@ def print_statistics(ressourcen_liste):
     def calculate_sum(column_index):
         return sum([entry[column_index] for entry in ressourcen_liste])
 
+    def calculate_average_demand(column_index, ressourcen_liste):
+        values = [entry[column_index] for entry in ressourcen_liste if
+                  column_index in [3, 4]]  # Filtere nach Spalten 3 (Nachfrage1) und 4 (Nachfrage2)
+        return sum(values) / len(values) if values else 0  # Vermeide Division durch Null
+
     stock1_durchschnitt = calculate_average(1)
     stock2_durchschnitt = calculate_average(2)
     cstock1_durchschnitt = calculate_average(7)
@@ -494,6 +503,9 @@ def print_statistics(ressourcen_liste):
     miss2_summe = calculate_sum(6)
     gesamt_miss = miss1_summe + miss2_summe
 
+    durchschnitt_nachfrage1 = calculate_average_demand(3, ressourcen_liste)
+    durchschnitt_nachfrage2 = calculate_average_demand(4, ressourcen_liste)
+
     print(f"Durchschnitt Stock1: {stock1_durchschnitt}")
     print(f"Durchschnitt Stock2: {stock2_durchschnitt}")
     print(f"Durchschnitt CStock1: {cstock1_durchschnitt}")
@@ -501,6 +513,8 @@ def print_statistics(ressourcen_liste):
     print(f"Summe Miss1: {miss1_summe}")
     print(f"Summe Miss2: {miss2_summe}")
     print(f"Gesamte Summe der verpassten Nachfrage: {gesamt_miss}")
+    print(f"Durchschnitt Nachfrage1: {durchschnitt_nachfrage1}")
+    print(f"Durchschnitt Nachfrage2: {durchschnitt_nachfrage2}")
 
 # Aufruf der Funktion
 print_statistics(ressourcen_liste)
