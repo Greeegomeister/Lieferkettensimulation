@@ -1,0 +1,75 @@
+# macOS
+.DS_Store
+
+# Thumbnails
+._*
+
+# Trashes Folder on USB sticks
+.Trashes
+
+# Icon must end with two \r
+Icon
+
+# Finder information files
+.Spotlight-V100
+.Trashes
+__MACOSX/
+
+# Thumbnails
+Thumbs.db
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# Compiled Python files
+__pycache__/
+*.pyc
+
+# Compiled Java files
+*.class
+
+# Compiled C++ files
+*.out
+*.o
+
+# Compiled Perl files
+*.plc
+*.pll
+*.plx
+
+# Compiled Ruby files
+*.pyc
+
+# Compiled PHP files
+*.~*
+
+# Compiled executables
+*.com
+*.exe
+*.dll
+*.bat
+*.cmd
+*.jar
+
+# Binary files
+*.bin
+*.lock
+*.sqlite
+*.sqlite3
+*.log
+*.gz
+*.tar
+*.zip
+*.rar
+*.tar.gz
+*.tar.xz
+*.tar.lzma
+*.tar.bz2
+*.tar.Z
+*.swp
